@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+  
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>MadScientist Dio</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800,900" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/railscasts.min.css">
+        <link rel="stylesheet" href="madisqe-global.css">
+        <link rel="stylesheet" href="madisqe-landing.css">
+        <link rel="author" href="humans.txt">
+        <link rel = "icon" href = "Assets/Logo.png" type = "image/x-icon">
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</script>
+        <script type="text/javascript"src="http://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+
+    <body>
+        <nav class="header">
+            <div class="logo"></div>
+            <ul class="menu">
+                <div class="menu__item toggle"><span></span></div>
+                <li class="menu__item"><a href="https://github.com/diogenes1991/Madisqe" class="link link--dark"><i class="fa fa-github"></i> Github</a></li>
+            </ul>
+        </nav>
+
+        <div class="wrapper">  <!-- Main wrapper -->
+          
+            <div id="CanvasWrapper">
+                <h1 class="hero__title">Sandpiles</h1>
+                <fieldset>
+                    <button id="Begin" class="dropbtn" onclick="ResumePause()">Resume</button>
+                    <!-- <button id="Begin" class="dropbtn" onclick="RevertTime()">Invert Time</button>
+                    <button id="Clear" class="dropbtn" onclick="DeleteParticles()">Clear</button>
+                    <button class="dropbtn" onclick="EngineDropdown()">Engine</button>
+                    <div id="EngineContent" class="dropdown-content">
+                        <button onclick="SetEngine(0)" class="dropbtn">Relativistic</button>
+                        <button onclick="SetEngine(1)" class="dropbtn">Classical</button>
+                    </div>
+                    <button class="dropbtn" onclick="TopologyDropdown()">Topology</button>
+                    <div id="TopologyContent" class="dropdown-content">
+                        <button onclick="SetTopology(0)" class="dropbtn">Square</button>
+                        <button onclick="SetTopology(1)" class="dropbtn">Torus</button>
+                    </div> -->
+                </fieldset>
+                <canvas id="theCanvas" width="1000" height="1000" oncontextmenu="return false">
+                    Canvas not supported; please update your browser.
+                </canvas>
+            </div>
+
+            <table class="fixed">
+                <tr><td>Cycles</td><td><div id="Cycles"></div></td></tr>
+                <tr><td>Total # of Beeds</td><td><div id="Beeds"></div></td></tr>
+                <!-- <tr><td>Potential Total Energy (GeV)</td><td><div id="PotentialEnergy"></div></td></tr>
+                <tr><td>Total Energy (GeV)</td><td><div id="TotalEnergy"></div></td></tr>
+                <tr><td>Pressure </td><td><div id="Pressure"></div></td></tr> -->
+            </table>
+
+            <!-- <fieldset>
+                <legend>New Particle Parameters</legend>
+                <p> 
+                    <div>Selected Type: </div><div id="SelectedType"></div>
+                    <br>
+                    <label>$p_x = $ </label>
+                    <input type = "text" id = "inputPx" value="0" /> GeV
+                    <br>
+                    <label>$p_y = $ </label>
+                    <input type = "text" id = "inputPy" value="0" /> GeV
+                    <br>
+                    <br>
+                    <button class="dropbtn" onclick="TypeDropdown()">Type</button>
+                        <div id="TypeContent" class="dropdown-content">
+                              <button onclick="SetType(0)" class="dropbtn">Hydrogen</button>
+                              <button onclick="SetType(1)" class="dropbtn">Proton</button>
+                              <button onclick="SetType(2)" class="dropbtn">Electron</button>
+                              <button onclick="SetType(3)" class="dropbtn">Photon</button>
+                        </div>
+                </p>
+            </fieldset> -->
+            
+            <!-- <fieldset>
+                <legend>Electrodynamic Parameters</legend>
+                <table class="fixed">
+                    <tr><td>$\alpha_0$ = </td><td><input type = "text" id = "Alpha0" value="0.0" /></td></tr>
+                </table>
+                <br>
+                <button onclick="UpdateParameters()" class="dropbtn"> Update </button>
+                </p>
+            </fieldset> -->
+            
+        </div>
+    <footer class="footer">madisqe 1.0.0</footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="madisqe.js"></script>
+    
+    <style type="text/css">
+        
+        canvas {
+            border: 2px solid black;
+        }  
+
+        input {
+            border: 1px solid black;
+            width: 100px;
+            height: 20px;
+            text-align: center;
+        }
+
+        .fixed{
+            table-layout:fixed;
+            /*table.fixed td { overflow: hidden;*/
+        }
+        /* Dropdown Button */
+        .dropbtn {
+          background-color: #3498DB;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;
+          cursor: pointer;
+        }
+      
+        /* Dropdown button on hover & focus */
+        .dropbtn:hover, .dropbtn:focus {
+          background-color: #2980B9;
+        }
+      
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+      
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f1f1f1;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+      
+        /* Links inside the dropdown */
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+      
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #ddd}
+      
+        /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+        .show {display:block;}
+
+    </style>
+
+    <script>
+
+        // This script attempts to create a fully covariant 
+        // simulation environment, of course the Canvas exists
+        // on the limited scope of a frame, but one should not 
+        // identify Camvas=Frame it is rather Canvas=Scope
+        // what this means is that the canvas can be shifted 
+        // to represent another frame and back without much effort
+        // The displays are attached to frame dependant quantities 
+        // merely because they are useful constructs within the scope 
+        // of a fixed frame.
+
+        // Dimensionful quantities 
+        // The simulation uses c = 1 = 1px/Cycle
+        // the cycles take time to fully render 
+        // and the next cycle is set to be computed 
+        // 3ms into the future, if the computations 
+        // are fast then this is the leading driver 
+        // for the speed of the partiles on the canvas
+
+        // The scope quantity is the overhead class that will handle
+        // all the fields present in the canvas
+
+        var CyclesCount = 0
+        var CyclesDisplay = document.getElementById("Cycles")
+        
+        var BeedsCount = 0
+        var BeedsDisplay = document.getElementById("Beeds")
+        
+
+        var theCanvas = document.getElementById("theCanvas");
+        var theContext = theCanvas.getContext("2d");
+        var isRunning = false
+
+        var Sandpile = []
+        var DSandpile = []
+        
+        for( var x = 0; x < theCanvas.width; x++ ){
+                var Row = []
+                var DRow = []
+                for ( var y = 0; y < theCanvas.height; y++ ) {
+                    Row.push(0)
+                    DRow.push(0)
+                }
+            Sandpile.push(Row)
+            DSandpile.push(DRow)
+        }
+
+        // for (var i=0;i<theCanvas.width;i++){
+        //     for (var j = 0; j<theCanvas.height; j++) {
+        //         Sandpile[i][j] = 2
+        //     }
+        // }
+
+        Sandpile[500+00][500+00] = 7000
+        Sandpile[500+10][500+00] = 7000
+        Sandpile[500+00][500+10] = 7000
+        Sandpile[500-10][500+00] = 7000
+        Sandpile[500+00][500-10] = 7000
+
+        var GoSlow = false
+        function Evolve(){
+            ClearCanvas()
+            CyclesCount += 1
+            BeedsCount = 0
+            
+            for( var x = 0; x < theCanvas.width; x++ ){
+                for ( var y = 0; y < theCanvas.height; y++ ) {
+                    if (Sandpile[x][y] >= 4){
+
+                        var neighboors = [[(x+1)%theCanvas.width,y],[(x-1)%theCanvas.width,y],[x,(y+1)%theCanvas.height],[x,(y-1)%theCanvas.height]]
+
+                        if (GoSlow){
+                            DSandpile[x][y]   -= 4
+                            for(var i = 0; i<neighboors.length; i++) DSandpile[neighboors[i][0]][neighboors[i][1]] += 1
+                        }
+                        else {
+                            var Diff = Sandpile[x][y]-Sandpile[x][y]%4
+                            DSandpile[x][y]   -= Diff
+                            for(var i = 0; i<neighboors.length; i++) DSandpile[neighboors[i][0]][neighboors[i][1]] += Diff/4
+                        }
+                    }
+                }
+            }
+
+            for( var x = 0; x < theCanvas.width; x++ ){
+                for ( var y = 0; y < theCanvas.height; y++ ) {
+                    // if(DSandpile[x][y]){
+                        Sandpile[x][y] += DSandpile[x][y]
+                        DSandpile[x][y] = 0
+                        BeedsCount += Sandpile[x][y]
+                        var Color = ""
+                             if (Sandpile[x][y]==0) Color = ""
+                        else if (Sandpile[x][y]==1) Color = "#333DFF"
+                        else if (Sandpile[x][y]==2) Color = "#33A3FF"
+                        else if (Sandpile[x][y]==3) Color = "#8F33FF"
+                        else                        Color = "black"    
+                        if (Color != ""){
+                            theContext.beginPath()
+                            theContext.arc(6*(x-500)+500,6*(y-500)+500,3,0,2*Math.PI)
+                            // theContext.arc(x,y,1,0,2*Math.PI)
+                            theContext.fillStyle = Color
+                            theContext.fill()
+                        }
+                    // }
+                }
+            }
+            console.log("Value at Center = ",Sandpile[500][500])
+            CyclesDisplay.innerHTML = CyclesCount
+            BeedsDisplay.innerHTML = BeedsCount
+            
+            if(isRunning) window.setTimeout(Evolve);
+        }
+
+        //
+        //   Engine handlers
+        //
+
+        function ClearCanvas(){
+          theContext.clearRect(0,0,theCanvas.width,theCanvas.height);
+        }
+
+        function ResumePause(){
+            isRunning = !isRunning
+            var Name = document.getElementById("Begin").innerHTML
+            document.getElementById("Begin").innerHTML = (Name=="Resume"?"Pause":"Resume")
+            Evolve()
+        }
+
+    </script>
+    </body>
+</html>
